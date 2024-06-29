@@ -1,0 +1,85 @@
+We were using NPM version 10.5.0 to install the dependencies and run the app.
+
+### How to run the app
+
+1. Go to `backend/database/index.js` and uncomment `seedData();` (line 93).
+2. Change the database credentials in `config.js` (same folder).
+3. Run the backend app:
+    - `npm install`
+    - `npm run`
+4. **IMPORTANT:** Please comment out `seedData();` (line 93) before starting the frontend server.
+5. Ensure you don't have `Key = activeUser` available in the localStorage and have a value before running the frontend server.
+6. Run the frontend app:
+    - `npm install` or `npm install --legacy-peer-deps` (if you see an error)
+7. Run the admin-frontend app:
+    - `npm install`
+    - `npm run`
+8. To run the unit tests:
+    - `npm test`
+
+### Business Logic
+
+- You have to add a product to the cart in order to adjust the quantity.
+- Order history is not stored in the database.
+- Check out credentials:
+    - Example valid credit card number: 4263982640269299
+    - Reference: [How to build a credit card user interface with validation in JavaScript](https://javascript.plainenglish.io/how-to-build-a-credit-card-user-interface-with-validation-in-javascript-4f190b6208ad).
+
+### Unit Tests - Cart
+
+We included 3 unit tests inside the `frontend/src/unit-tests` folder called `Cart.test.js`. These tests are:
+
+1. Mocking the add to the cart.
+2. Removing from the cart.
+3. Changing the product quantity services and checking the states update.
+
+**Success Criteria:**
+- Add to cart successfully.
+- Remove from cart successfully.
+- Change the quantity on the cart page successfully.
+
+### Unit Tests - Reviews
+
+The test mocks the `reviewService` module, including functions such as `addReview` and `getAllReviews`, ensuring that the actual API calls are not made during testing. The `useNavigate` hook from React Router is also mocked to handle navigation without affecting the test environment.
+
+Before each test, all mock functions are cleared to ensure a clean test state. The test uses a wrapper component that provides the necessary context (`CartProvider`) for the `useReview` hook to function correctly.
+
+The test verifies that the `addReview` function from `reviewService` was called with the correct arguments. It also checks that the state of reviews within the hook contains the newly added review, ensuring that the review addition logic works as expected.
+
+### Handling Inappropriate Reviews
+
+To detect and handle inappropriate reviews, we have integrated the 'bad-words' library. Reference: [bad-words](https://www.npmjs.com/package/bad-words).
+
+It comes with pre-defined words, which can be accessed through this [link](https://github.com/web-mech/badwords/blob/master/lib/lang.json). In addition, we can add or remove words depending on the business logic.
+
+A review is considered inappropriate if it contains:
+- Hate speech
+- Explicit content or references
+- Unprofessional language
+- Personal attacks
+- Irrelevant content
+- Self-promotion
+- Privacy information breaches
+- Promotion of illegal activities
+
+**Examples:**
+- Unprofessional language: "This product is shit."
+- Personal attack: "Seller is a scammer."
+- Privacy breach: "This is my address No 45, Court Street, Melbourne."
+
+### GraphQL Subscription
+
+There are 2 graphs on the dashboard page:
+
+1. **Bar Graph**: Represents the highest average rating products. The admin can use this chart to see the top products with the highest reviews. It will show only the top 10 products. If there are fewer than 10 products with reviews, it will show only those with reviews.
+    - Formula: Product A has 5 reviews with all 5 -> avg is 5.
+    - Formula: Product B has 2 reviews with 1 and 5 -> avg is 2.5.
+
+2. **Pie Chart**: Represents the distribution of the number of reviews by product. The admin can use this graph to see which products are the most popular based on the number of reviews. It will count the reviews by products. A product must have at least one review to be shown in the chart.
+    - Formula: Product A has 10 reviews -> Show 10 counts.
+
+**Reference Lists (aside from the inline comment):**
+- Product images: [Gemini](https://gemini.google.com/)
+- GraphQL, Database, Services are adapted from COSC2758/2938 Full Stack Development.
+
+---
